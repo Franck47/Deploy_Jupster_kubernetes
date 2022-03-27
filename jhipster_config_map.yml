@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: central-jhipster-config
+data:
+  application.yml: |+
+    # Common configuration shared between all applications
+    configserver:
+      name: Docker JHipster Registry
+      status: Connected to the JHipster Registry running in K8s
+
+    jhipster:
+      security:
+        authentication:
+        jwt:
+          secret: my-secret-key-which-should-be-changed-in-production-and-be-base64-encoded
+
+    eureka:
+      client:
+        service-url:
+        defaultZone: http://admin:admin@jhipster-registry:8761/eureka/

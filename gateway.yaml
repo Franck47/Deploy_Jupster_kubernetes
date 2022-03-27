@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    io.kompose.service: live-gateway-app
+  name: live-gateway-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      io.kompose.service: live-gateway-app
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: live-gateway-app
+    spec:
+      containers:
+      - image: angagedocker/live-gateway-prod
+        imagePullPolicy: Always
+        name: live-gateway-app
+        ports:
+          - containerPort: 8080
+          - containerPort: 8210
+          - containerPort: 8211
+        resources: 
+          requests:
+            cpu: 500m
+            memory: 1000Mi
+          limits:
+            cpu: 1000m
+            memory: 1500Mi
+#        external_links:
+#        - jhipster-registry:jhipster-registry
+#        - mongo:mongo
+#        - rabbit:rabbi                         
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: dev,swagger,schedule
+        - name: SPRING_CLOUD_CONFIG_URI
+          value: http://admin:admin@jhipster-registry:8761/config
+        - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+          value: http://admin:admin@jhipster-registry:8761/eureka   
+        - name: JAVA_OPTIONS
+          value: "-Xmx2048m -Xms2048m -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8210 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.rmi.port=8211 -Djava.rmi.server.hostname=localhost"
+        - name: JHIPSTER_SLEEP
+          value: "1"
+        - name: RIBBON_READTIMEOUT
+          value: "60000"
+        - name: HYSTRIX_COMMAND_DEFAULT_EXECUTION_ISOLATION_THREAD_TIMEOUT_IN_MILLISECONDS
+          value: "60000"
+        - name: SPRING_SERVLET_MULTIPART_MAXFILESIZE
+          value: "10MB"  
+        - name: SPRING_SERVLET_MULTIPART_MAXREQUESTSIZE
+          value: "10MB"
+        - name: SPRING_CLOUD_STREAM_BINDERS_RABBITANGAGE_ENVIRONMENT_SPRING_RABBITMQ_HOST
+          value: rabbit
+        - name: SPRING_RABBITMQ_HOST
+          value: rabbit
+        - name: APPLICATION_STOMP-HOST
+          value: rabbit
+        - name: APPLICATION_STOMP-PORT
+          value: "61613"
+        - name: APPLICATION_STOMP-USER
+          value: angage
+        - name: APPLICATION_STOMP-PASSWORD
+          value: angage
+        - name: APPLICATION_STOMP-VHOST
+          value: angage  
+        - name: SPRING_CLOUD_INETUTILS_PREFERRED-NETWORKS
+          value: "10.0.1"
+        - name: SERVER_USE-FORWARD-HEADERS
+          value: "true"
+        - name: HAZELCAST_INTERFACES
+          value: "10.0.7.*"
+        - name: APPLICATION_GOOGLE_RECAPTCHA_ENABLED
+          value: "true"
+      imagePullSecrets:
+      - name: hub
+      restartPolicy: Always
+status: {}
+
